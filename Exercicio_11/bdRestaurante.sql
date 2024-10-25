@@ -76,10 +76,10 @@ create table ITEMPEDIDO(
 
 --SESSÃO DE INSERÇÕES DO BANCO DE DADOS
 insert CLIENTE
-       values(1, '123.456.789-11', 'Erick', '12-16-2005', 'erick@gmail.com', '(11)91234-5678'),
-             (2, '321.654.987-22', 'Anna Júlia', '06-02-2005', 'naju@gmail.com', '(11)94321-8765'),
-             (3, '987.654.321-33', 'Alana', '06-11-2002', 'lana@gmail.com', '(11)95678-1234'),
-             (4, '789.456.123-44', 'Lucas', '06-11-2005', 'lucas@gmail.com', '(11)93124-8756');
+       values(1, '123.456.789-11', 'Erick', '2005-12-16', 'erick@gmail.com', '(11)91234-5678'),
+             (2, '321.654.987-22', 'Anna Júlia', '2005-06-02', 'naju@gmail.com', '(11)94321-8765'),
+             (3, '987.654.321-33', 'Alana', '2002-06-11', 'lana@gmail.com', '(11)95678-1234'),
+             (4, '789.456.123-44', 'Lucas', '2005-06-11', 'lucas@gmail.com', '(11)93124-8756');
 
 insert FORMAPAGAMENTO
        values(101, 'Débito'),
@@ -110,9 +110,9 @@ insert CARDAPIO
              (1107, 'Bauru', 20.00, 'Prato', 1004);
 
 insert PEDIDO
-       values(2001, '10-25-2024', 40, 20.00, 4, 104),
-             (2002, '10-20-2024', 2, 147.00, 2, 102),
-             (2003, '10-13-2024', 1, 97.00, 1, 101);
+       values(2001, '2024-10-25', 40, 20.00, 4, 104),
+             (2002, '2024-10-20', 2, 147.00, 2, 102),
+             (2003, '2024-10-13', 1, 97.00, 1, 101);
 
 insert ITEMPEDIDO
        values(2101, 1, 20.00, 20.00, 202, 2001, 1101),
@@ -124,6 +124,7 @@ insert ITEMPEDIDO
              (2107, 1, 7.00, 7.00, 203, 2001, 1102);
 
 --SESSÃO DE CONSULTAS DO BANCO DE DADOS
+--Questão 4
 DESC FORMAPAGAMENTO;
 DESC PEDIDO;
 DESC ITEMPEDIDO;
@@ -132,6 +133,7 @@ DESC CATEGORIA;
 DESC CARDAPIO;
 DESC GARCOM;
 
+--Questão 5
 select * from FORMAPAGAMENTO;
 select * from PEDIDO;
 select * from ITEMPEDIDO;
@@ -140,19 +142,82 @@ select * from CATEGORIA;
 select * from CARDAPIO;
 select * from GARCOM;
 
+--Questão 6
 select * from CARDAPIO;
 
+--Questão 7
 select * 
 from CARDAPIO
 order by cat_codigo;
 
+--Questão 8
 select c.cli_nome, p.ped_data
 from CLIENTE c inner join PEDIDO p using(cli_codigo);
 
+--Questão 9
 alter table CARDAPIO add column car_saldo int;
 
+--Questão 10
 select fpg_nome from FORMAPAGAMENTO;
 
+--Questão 11
 select fpg_nome from FORMAPAGAMENTO 
 where fpg_codigo not in (select distinct fpg_codigo from PEDIDO);
 
+--Questão 12
+select sum(i.itm_quantitdade), c.car_nome
+from ITEMPEDIDO i inner join CARDAPIO c 
+on c.car_codigo = i.car_codigo
+order by sum(i.itm_quantitdade) DESC, c.car_nome
+group by c.car_nome
+limit 5;
+
+--Questão 13
+alter table CLIENTES add columns cli_cidade varchar(30), cli_uf varchar(2);
+
+--Questão 14
+update CLIENTES set car_cidade = 'Santana de Parnaíba' where cli_codigo = 2 or cli_codigo = 4;
+update CLIENTES set car_cidade = 'Cajamar' where cli_codigo = 1 or cli_codigo = 3;
+update CLIENTES set car_uf = 'SP';
+
+--Questão 15
+select cli_nome, cli_email, cli_telefone, cli_cidade, cli_uf
+from CLIENTES
+order by cli_uf, cli_cidade;
+
+--Questão 16
+select sum(p.ped_valorTotal)
+from PEDIDO p inner join FORMAPAGAMENTO fp using(fpg_codigo)
+where p.ped_data between '2024-01-01' and '2024-03-31'
+group by fp.fpg_nome;
+
+--Questão 17
+insert GARCOM
+       values('205', 'Willian', '----'),
+             ('206', 'Paulo Eduardo', '----');
+
+--Questão 18
+select ct.cat_nome, sum(p.ped_valorTotal)
+from PEDIDO p inner join ITEMPEDIDO i using(ped_numero)
+inner join CARDAPIO c using(car_codigo)
+inner join CATEGORIA ct using(cat_codigo)
+where p.ped_data between '2024-01-01' and '2024-03-31'
+group by ct.cat_nome;
+
+--Questão 19
+select c.car_nome, sum(i.itm_quantitdade)
+from PEDIDO p inner join ITEMPEDIDO i using(ped_numero)
+inner join CARDAPIO c using(car_codigo)
+inner join  CATEGORIA ct using(cat_codigo)
+where p.ped_data BETWEEN '2024-10-25' and '2024-09-25'
+group by c.car_nome;
+
+--Questão 20
+select car_nome from CARDAPIO;
+
+--Questão 21
+select sum(p.ped_valorTotal)
+from PEDIDO p inner join ITEMPEDIDO i using(ped_numero)
+inner join GARCOM g using(gar_codigo)
+where p.ped_data between '2024-01-01' and '2024-03-31'
+group by g.gar_nome;
