@@ -152,10 +152,10 @@ order by cat_codigo;
 
 --Questão 8
 select c.cli_nome, p.ped_data
-from CLIENTE c inner join PEDIDO p using(cli_codigo);
+from CLIENTE c inner join PEDIDO p on c.cli_codigo = p.cli_codigo;
 
 --Questão 9
-alter table CARDAPIO add column car_saldo int;
+alter table CARDAPIO add car_saldo int;
 
 --Questão 10
 select fpg_nome from FORMAPAGAMENTO;
@@ -168,26 +168,26 @@ where fpg_codigo not in (select distinct fpg_codigo from PEDIDO);
 select sum(i.itm_quantitdade), c.car_nome
 from ITEMPEDIDO i inner join CARDAPIO c 
 on c.car_codigo = i.car_codigo
-order by sum(i.itm_quantitdade) DESC, c.car_nome
 group by c.car_nome
-limit 5;
+order by sum(i.itm_quantitdade) DESC, c.car_nome
+
 
 --Questão 13
-alter table CLIENTES add columns cli_cidade varchar(30), cli_uf varchar(2);
+alter table CLIENTE add cli_cidade varchar(30), cli_uf varchar(2);
 
 --Questão 14
-update CLIENTES set car_cidade = 'Santana de Parnaíba' where cli_codigo = 2 or cli_codigo = 4;
-update CLIENTES set car_cidade = 'Cajamar' where cli_codigo = 1 or cli_codigo = 3;
-update CLIENTES set car_uf = 'SP';
+update CLIENTE set cli_cidade = 'Santana de Parnaíba' where cli_codigo = 2 or cli_codigo = 4;
+update CLIENTE set cli_cidade = 'Cajamar' where cli_codigo = 1 or cli_codigo = 3;
+update CLIENTE set cli_uf = 'SP';
 
 --Questão 15
 select cli_nome, cli_email, cli_telefone, cli_cidade, cli_uf
-from CLIENTES
+from CLIENTE
 order by cli_uf, cli_cidade;
 
 --Questão 16
 select sum(p.ped_valorTotal)
-from PEDIDO p inner join FORMAPAGAMENTO fp using(fpg_codigo)
+from PEDIDO p inner join FORMAPAGAMENTO fp on fp.fpg_codigo = p.fpg_codigo
 where p.ped_data between '2024-01-01' and '2024-03-31'
 group by fp.fpg_nome;
 
@@ -198,17 +198,17 @@ insert GARCOM
 
 --Questão 18
 select ct.cat_nome, sum(p.ped_valorTotal)
-from PEDIDO p inner join ITEMPEDIDO i using(ped_numero)
-inner join CARDAPIO c using(car_codigo)
-inner join CATEGORIA ct using(cat_codigo)
+from PEDIDO p inner join ITEMPEDIDO i on p.ped_numero = i.ped_numero
+inner join CARDAPIO c on c.car_codigo = i.car_codigo
+inner join CATEGORIA ct on ct.cat_codigo = c.cat_codigo
 where p.ped_data between '2024-01-01' and '2024-03-31'
 group by ct.cat_nome;
 
 --Questão 19
 select c.car_nome, sum(i.itm_quantitdade)
-from PEDIDO p inner join ITEMPEDIDO i using(ped_numero)
-inner join CARDAPIO c using(car_codigo)
-inner join  CATEGORIA ct using(cat_codigo)
+from PEDIDO p inner join ITEMPEDIDO i on p.ped_numero = i.ped_numero
+inner join CARDAPIO c on c.car_codigo = i.car_codigo
+inner join  CATEGORIA ct on ct.cat_codigo = c.cat_codigo
 where p.ped_data BETWEEN '2024-10-25' and '2024-09-25'
 group by c.car_nome;
 
@@ -217,7 +217,7 @@ select car_nome from CARDAPIO;
 
 --Questão 21
 select sum(p.ped_valorTotal)
-from PEDIDO p inner join ITEMPEDIDO i using(ped_numero)
-inner join GARCOM g using(gar_codigo)
+from PEDIDO p inner join ITEMPEDIDO i on p.ped_numero = i.ped_numero
+inner join GARCOM g on g.gar_codigo = i.gar_codigo
 where p.ped_data between '2024-01-01' and '2024-03-31'
 group by g.gar_nome;
